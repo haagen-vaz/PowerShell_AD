@@ -1,0 +1,8 @@
+﻿"SamAccountName","DisplayName","Department","Site","LastLogon","DaysInactive","AccountExpires"
+"nnils","Nils Nilsson","Operations","Lager","2025-08-15 09:00","76","2026-02-01"
+"qquentin","Quentin Quentinsson","Sales","Kontor MalmÃ¶","2025-09-01 10:00","59","2025-12-31"
+"eolsson","Erik Olsson","Sales","Huvudkontor","2025-08-15 09:00","76","2026-03-01"
+"mberg","Maria Berg","Finance","Kontor MalmÃ¶","2025-08-20 14:30","71","2026-05-15"
+"jsvensson","Johan Svensson","Operations","Lager","2025-08-25 08:15","66","2026-01-20"
+"admin_backup","Backup Admin Account","IT","Datacenter","2025-07-01 02:00","122","2099-12-31"
+"test_user","Test User","IT","Datacenter","2025-06-15 10:00","137","2025-10-15"

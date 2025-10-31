@@ -1,0 +1,19 @@
+﻿============================================================
+ACTIVE DIRECTORY AUDIT REPORT
+Generated   : 2025-10-30 15:24
+Domain      : techcorp.local
+Export date : 2025-10-14 06:00
+============================================================
+
+EXECUTIVE SUMMARY
+-----------------
+OK: Inga konton som löper ut inom 30 dagar
+WARNING: 7 användare har inte loggat in på 30+ dagar
+WARNING: 4 datorer har inte setts på 30+ dagar
+SECURITY: 14 användare har lösenord äldre än 90 dagar eller 'never expires'
+
+Inaktiva användare (>30 dagar): 7
+Konton som löper ut (30 dagar): 
+Datorer ej sedda (30 dagar)    : 4
+Gamla lösenord (90+ dagar)     : 14
+
