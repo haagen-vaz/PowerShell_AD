@@ -1,19 +1,59 @@
-﻿============================================================
+===============================================================================
 ACTIVE DIRECTORY AUDIT REPORT
-Generated   : 2025-10-30 15:24
+===============================================================================
+Generated   : 2025-10-31 14:32
 Domain      : techcorp.local
 Export date : 2025-10-14 06:00
-============================================================
+Source file : .\ad_export.json
 
 EXECUTIVE SUMMARY
 -----------------
-OK: Inga konton som löper ut inom 30 dagar
+CRITICAL: 1 konton som löper ut inom 30 dagar
 WARNING: 7 användare har inte loggat in på 30+ dagar
 WARNING: 4 datorer har inte setts på 30+ dagar
 SECURITY: 14 användare har lösenord äldre än 90 dagar eller 'never expires'
 
-Inaktiva användare (>30 dagar): 7
-Konton som löper ut (30 dagar): 
-Datorer ej sedda (30 dagar)    : 4
-Gamla lösenord (90+ dagar)     : 14
+ANVÄNDARE PER AVDELNING
+-----------------------
+Finance          5 st
+HR               3 st
+IT              10 st
+Management       3 st
+Operations       5 st
+Sales            5 st
+
+INAKTIVA ANVÄNDARE (>30 dagar)
+-----------------------------------------------
+Konto       Namn                Avdelning      Senast       Dagar
+-----       ----                ---------      ------       -----
+nnils       Nils Nilsson        Operations     2025-08-15      77
+qquentin    Quentin Quentinsson Sales          2025-09-01      60
+eolsson     Erik Olsson         Sales          2025-08-15      77
+mberg       Maria Berg          Finance        2025-08-20      72
+jsvensson   Johan Svensson      Operations     2025-08-25      67
+admin_backupBackup Admin AccountIT             2025-07-01     123
+test_user   Test User           IT             2025-06-15     138
+
+DATORER PER SITE
+----------------
+Datacenter : 4 datorer
+Huvudkontor : 8 datorer
+Kontor Malmö : 3 datorer
+Lager : 3 datorer
+Säkerhetskopia : 2 datorer
+
+10 DATORER SOM INTE SETTS PÅ LÄNGST TID
+---------------------------------------
+Namn            Senast sedd   DagarSite              
+----            ------------  ---------              
+OLD-PC-001      2025-07-15      108Huvudkontor       
+PC-LAG-003      2025-08-10       82Lager             
+LAPTOP-HK-002   2025-08-30       62Huvudkontor       
+PC-MAL-003      2025-09-05       56Kontor Malmö      
+TEST-VM-001     2025-09-20       41Datacenter        
+PC-HK-005       2025-10-12       19Huvudkontor       
+PC-LAG-002      2025-10-13       18Lager             
+PC-HK-003       2025-10-13       18Huvudkontor       
+PC-MAL-001      2025-10-13       18Kontor Malmö      
+PC-DR-001       2025-10-13       18Säkerhetskopia    
 
