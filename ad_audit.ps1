@@ -213,6 +213,8 @@ foreach ($u in ($inactive30 | Sort-Object {
 }
 $report += ""
 
+
+
 # Tabell för användare med gamla lösenord
 $report += @"
 ANVÄNDARE MED GAMLA LÖSENORD
