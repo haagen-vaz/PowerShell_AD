@@ -1,17 +1,18 @@
 ===============================================================================
 ACTIVE DIRECTORY AUDIT REPORT
 ===============================================================================
-Generated   : 2025-10-31 14:32
+Generated   : 2025-10-14 06:00
 Domain      : techcorp.local
 Export date : 2025-10-14 06:00
+Kontrollperiod : 2025-10-14 – 2025-11-13
 Source file : .\ad_export.json
 
 EXECUTIVE SUMMARY
 -----------------
-CRITICAL: 1 konton som löper ut inom 30 dagar
+CRITICAL: 2 konton som löper ut inom 30 dagar
 WARNING: 7 användare har inte loggat in på 30+ dagar
-WARNING: 4 datorer har inte setts på 30+ dagar
-SECURITY: 14 användare har lösenord äldre än 90 dagar eller 'never expires'
+WARNING: 3 datorer har inte setts på 30+ dagar
+SECURITY: 13 användare har lösenord äldre än 90 dagar eller 'never expires'
 
 ANVÄNDARE PER AVDELNING
 -----------------------
@@ -22,38 +23,55 @@ Management       3 st
 Operations       5 st
 Sales            5 st
 
-INAKTIVA ANVÄNDARE (>30 dagar)
+INAKTIVA ANVÄNDARE
 -----------------------------------------------
 Konto       Namn                Avdelning      Senast       Dagar
 -----       ----                ---------      ------       -----
-nnils       Nils Nilsson        Operations     2025-08-15      77
-qquentin    Quentin Quentinsson Sales          2025-09-01      60
-eolsson     Erik Olsson         Sales          2025-08-15      77
-mberg       Maria Berg          Finance        2025-08-20      72
-jsvensson   Johan Svensson      Operations     2025-08-25      67
-admin_backupBackup Admin AccountIT             2025-07-01     123
-test_user   Test User           IT             2025-06-15     138
+test_user   Test User           IT             2025-06-15     121
+admin_backupBackup Admin AccountIT             2025-07-01     105
+nnils       Nils Nilsson        Operations     2025-08-15      60
+eolsson     Erik Olsson         Sales          2025-08-15      60
+mberg       Maria Berg          Finance        2025-08-20      55
+jsvensson   Johan Svensson      Operations     2025-08-25      50
+qquentin    Quentin Quentinsson Sales          2025-09-01      43
 
-DATORER PER SITE
-----------------
-Datacenter : 4 datorer
-Huvudkontor : 8 datorer
-Kontor Malmö : 3 datorer
-Lager : 3 datorer
-Säkerhetskopia : 2 datorer
+ANVÄNDARE MED GAMLA LÖSENORD
+----------------------------
+Konto       Namn                  Avdelning       Senast ändrat          Dagar
+-----       ----                  -----------     --------------         -----
+admin_backupBackup Admin Account  IT              2025-01-01               286
+test_user   Test User             IT              2025-01-15               272
+eolsson     Erik Olsson           Sales           2025-04-01               196
+nnils       Nils Nilsson          Operations      2025-04-10               187
+mberg       Maria Berg            Finance         2025-05-10               157
+jjohan      Johan Johansson       Operations      2025-05-15               152
+qquentin    Quentin Quentinsson   Sales           2025-05-20               147
+jsvensson   Johan Svensson        Operations      2025-05-25               142
+ffred       Fredrik Fredriksson   Sales           2025-06-01               135
+rrobert     Robert Robertsson     HR              2025-06-15               121
+yynva       Ynva Ynvasson         Finance         2025-06-20               116
+mmaria      Maria Mariasson       Finance         2025-07-01               105
+ddavid      David Davidsson       IT              2025-07-20                86
 
 10 DATORER SOM INTE SETTS PÅ LÄNGST TID
 ---------------------------------------
-Namn            Senast sedd   DagarSite              
-----            ------------  ---------              
-OLD-PC-001      2025-07-15      108Huvudkontor       
-PC-LAG-003      2025-08-10       82Lager             
-LAPTOP-HK-002   2025-08-30       62Huvudkontor       
-PC-MAL-003      2025-09-05       56Kontor Malmö      
-TEST-VM-001     2025-09-20       41Datacenter        
-PC-HK-005       2025-10-12       19Huvudkontor       
-PC-LAG-002      2025-10-13       18Lager             
-PC-HK-003       2025-10-13       18Huvudkontor       
-PC-MAL-001      2025-10-13       18Kontor Malmö      
-PC-DR-001       2025-10-13       18Säkerhetskopia    
+Namn            Senast sedd     Dagar Site              
+----            ------------    -----------            
+OLD-PC-001      2025-07-15       91   Huvudkontor       
+PC-LAG-003      2025-08-10       65   Lager             
+LAPTOP-HK-002   2025-08-30       45   Huvudkontor       
+PC-MAL-003      2025-09-05       39   Kontor Malmö      
+TEST-VM-001     2025-09-20       24   Datacenter        
+PC-HK-005       2025-10-12        2   Huvudkontor       
+PC-LAG-002      2025-10-13        1   Lager             
+PC-HK-003       2025-10-13        1   Huvudkontor       
+PC-MAL-001      2025-10-13        1   Kontor Malmö      
+PC-DR-001       2025-10-13        1   Säkerhetskopia    
+
+KONTON SOM LÖPER UT INOM 30 DAGAR
+---------------------------------
+Konto       Namn                  Avdelning       Löper ut          
+-----       ----                  -----------     ---------         
+jjohan      Johan Johansson       Operations      2025-10-30        
+eerik       Erik Eriksson         IT              2025-11-01        
 

@@ -5,7 +5,7 @@ param(
     [string]$OutDir = "."
 )
 
-# Ställ in UTF-8 och svensk kultur
+# Ställ in UTF-8 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $sv = [System.Globalization.CultureInfo]::GetCultureInfo("sv-SE")
 
@@ -13,6 +13,11 @@ $sv = [System.Globalization.CultureInfo]::GetCultureInfo("sv-SE")
 try {
     $raw = Get-Content -Path $InputPath -Raw -ErrorAction Stop
     $data = $raw | ConvertFrom-Json
+    # Om användaren inte skickat in -Now, använd export_date
+    if (-not $PSBoundParameters.ContainsKey('Now')) {
+        $Now = [datetime]$data.export_date
+    }
+
 }
 catch {
     Write-Error "Kunde inte läsa JSON: $_"
@@ -25,7 +30,7 @@ $exportDate = [datetime]$data.export_date
 $users = @($data.users)
 $computers = @($data.computers)
 
-# Konverterar text till datum (säkert)
+# Konverterar text till datum 
 function Convert-ToDateSafe {
     param([string]$Value)
     try {
@@ -107,11 +112,12 @@ Select-Object *,
 @{n = 'LastSeen'; e = { Convert-ToDateSafe $_.lastLogon } },
 @{n = 'DaysSinceSeen'; e = {
         $ls = Convert-ToDateSafe $_.lastLogon
-        if ($ls) { [int]((New-TimeSpan -Start $ls -End $Now).TotalDays) } else { $null }
+        if ($ls) { (New-TimeSpan -Start $ls.Date -End $Now.Date).Days } else { $null }
     }
 } |
 Sort-Object -Property LastSeen |
 Select-Object -First 10
+
 
 # Datorer ej sedda på 30+ dagar
 $computersNotSeen30 =
@@ -166,9 +172,9 @@ $report += $header
 $report += "Generated   : $($Now.ToString('yyyy-MM-dd HH:mm',$sv))"
 $report += "Domain      : $domain"
 $report += "Export date : $($exportDate.ToString('yyyy-MM-dd HH:mm',$sv))"
+$report += "Kontrollperiod : $($Now.ToString('yyyy-MM-dd',$sv)) – $($Now.AddDays(30).ToString('yyyy-MM-dd',$sv))"
 $report += "Source file : $InputPath"
 $report += ""
-
 $report += @"
 EXECUTIVE SUMMARY
 -----------------
@@ -186,13 +192,17 @@ $report += ""
 
 # Tabell för inaktiva användare
 $report += @"
-INAKTIVA ANVÄNDARE (>30 dagar)
+INAKTIVA ANVÄNDARE
 -----------------------------------------------
 "@
 $report += ("{0,-12}{1,-20}{2,-15}{3,-13}{4,5}" -f "Konto", "Namn", "Avdelning", "Senast", "Dagar")
 $report += ("{0,-12}{1,-20}{2,-15}{3,-13}{4,5}" -f "-----", "----", "---------", "------", "-----")
 
-foreach ($u in $inactive30) {
+foreach ($u in ($inactive30 | Sort-Object {
+            $last = Convert-ToDateSafe $_.lastLogon
+            if ($last) { [int]((New-TimeSpan -Start $last -End $Now).TotalDays) } else { 0 }
+        } -Descending)) {
+
     $last = Convert-ToDateSafe $u.lastLogon
     $lastStr = if ($last) { $last.ToString('yyyy-MM-dd', $sv) } else { "N/A" }
     $days = if ($last) { [int]((New-TimeSpan -Start $last -End $Now).TotalDays) } else { 0 }
@@ -203,22 +213,33 @@ foreach ($u in $inactive30) {
 }
 $report += ""
 
-# Tabell för datorer per site
-$report += "DATORER PER SITE"
-$report += "----------------"
-foreach ($grp in $computersBySite) {
-    $siteName = if ($grp.Name) { $grp.Name } else { "Okänd" }
-    $report += "$siteName : $($grp.Count) datorer"
+# Tabell för användare med gamla lösenord
+$report += @"
+ANVÄNDARE MED GAMLA LÖSENORD
+----------------------------
+"@
+$report += ("{0,-12}{1,-22}{2,-16}{3,-18}{4,10}" -f "Konto", "Namn", "Avdelning", "Senast ändrat", "Dagar")
+$report += ("{0,-12}{1,-22}{2,-16}{3,-18}{4,10}" -f "-----", "----", "-----------", "--------------", "-----")
+
+foreach ($u in ($pwdOldUsers | Sort-Object -Property PwdAge -Descending)) {
+    $pwdDate = Convert-ToDateSafe $u.passwordLastSet
+    $pwdStr = if ($pwdDate) { $pwdDate.ToString('yyyy-MM-dd', $sv) } else { "N/A" }
+    $days = if ($u.PwdAge) { $u.PwdAge } else { "" }
+    $dept = if ([string]::IsNullOrWhiteSpace($u.department)) { "-" } else { $u.department }
+
+    $report += ("{0,-12}{1,-22}{2,-16}{3,-18}{4,10}" -f `
+            $u.samAccountName, $u.displayName, $dept, $pwdStr, $days)
 }
 $report += ""
+
 
 # 10 äldst inloggade datorer
 $report += @"
 10 DATORER SOM INTE SETTS PÅ LÄNGST TID
 ---------------------------------------
 "@
-$report += ("{0,-16}{1,-13}{2,6}{3,-18}" -f "Namn", "Senast sedd", "Dagar", "Site")
-$report += ("{0,-16}{1,-13}{2,6}{3,-18}" -f "----", "------------", "-----", "----")
+$report += ("{0,-16}{1,-13}{2,8} {3,-18}" -f "Namn", "Senast sedd", "Dagar", "Site")
+$report += ("{0,-16}{1,-13}{2,8}{3,-18}" -f "----", "------------", "-----", "------")
 
 foreach ($c in $top10Old) {
     $ls = $c.LastSeen
@@ -226,9 +247,28 @@ foreach ($c in $top10Old) {
     $days = if ($c.DaysSinceSeen) { $c.DaysSinceSeen } else { "" }
     $site = if ($c.site) { $c.site } else { "-" }
 
-    $report += ("{0,-16}{1,-13}{2,6}{3,-18}" -f $c.name, $lsStr, $days, $site)
+    $report += ("{0,-16}{1,-13}{2,6}   {3,-18}" -f $c.name, $lsStr, $days, $site)
 }
 $report += ""
+
+# Tabell för konton som löper ut inom 30 dagar
+$report += @"
+KONTON SOM LÖPER UT INOM 30 DAGAR
+---------------------------------
+"@
+$report += ("{0,-12}{1,-22}{2,-16}{3,-18}" -f "Konto", "Namn", "Avdelning", "Löper ut")
+$report += ("{0,-12}{1,-22}{2,-16}{3,-18}" -f "-----", "----", "-----------", "---------")
+
+foreach ($u in ($accountsExpiringSoon | Sort-Object -Property accountExpires)) {
+    $expDate = Convert-ToDateSafe $u.accountExpires
+    $expStr = if ($expDate) { $expDate.ToString('yyyy-MM-dd', $sv) } else { "N/A" }
+    $dept = if ([string]::IsNullOrWhiteSpace($u.department)) { "-" } else { $u.department }
+
+    $report += ("{0,-12}{1,-22}{2,-16}{3,-18}" -f `
+            $u.samAccountName, $u.displayName, $dept, $expStr)
+}
+$report += ""
+
 
 
 # Skriv rapport och CSV
