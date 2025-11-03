@@ -234,6 +234,42 @@ foreach ($u in ($pwdOldUsers | Sort-Object -Property PwdAge -Descending)) {
 }
 $report += ""
 
+# --- Exportera datorstatus per site till CSV ---
+$computersBySiteStats = $computers |
+Group-Object site | ForEach-Object {
+    $site = $_.Name
+    $members = $_.Group
+    [pscustomobject]@{
+        Site               = $site
+        TotalComputers     = $members.Count
+        InactiveComputers  = ($members | Where-Object {
+                $ls = Convert-ToDateSafe $_.lastLogon
+                $ls -and $ls -lt $Now.AddDays(-30)
+            }).Count
+        Windows10Count     = ($members | Where-Object { $_.operatingSystem -like "Windows 10*" }).Count
+        Windows11Count     = ($members | Where-Object { $_.operatingSystem -like "Windows 11*" }).Count
+        WindowsServerCount = ($members | Where-Object { $_.operatingSystem -like "Windows Server*" }).Count
+    }
+}
+
+$computersBySiteCsv = Join-Path $OutDir "computers_by_site.csv"
+$computersBySiteStats | Export-Csv -Path $computersBySiteCsv -NoTypeInformation -Encoding utf8
+
+# Lägg till summering i rapporten
+$report += @"
+DATORSTATISTIK PER SITE
+-----------------------
+"@
+$report += ("{0,-18}{1,6}{2,9}{3,9}{4,9}{5,9}" -f "Site", "Tot", "Inakt", "Win10", "Win11", "Server")
+$report += ("{0,-18}{1,6}{2,9}{3,9}{4,9}{5,9}" -f "----", "---", "------", "------", "------", "------")
+foreach ($row in $computersBySiteStats) {
+    $report += ("{0,-18}{1,6}{2,9}{3,9}{4,9}{5,9}" -f `
+            $row.Site, $row.TotalComputers, $row.InactiveComputers,
+        $row.Windows10Count, $row.Windows11Count, $row.WindowsServerCount)
+}
+$report += ""
+
+
 
 # 10 äldst inloggade datorer
 $report += @"
@@ -270,6 +306,34 @@ foreach ($u in ($accountsExpiringSoon | Sort-Object -Property accountExpires)) {
             $u.samAccountName, $u.displayName, $dept, $expStr)
 }
 $report += ""
+
+$report += @"
+OPERATIVSYSTEM
+---------------------------
+"@
+$computers |
+Group-Object operatingSystem |
+Sort-Object Count -Descending |
+ForEach-Object {
+    $report += ("{0,-28}{1,4} st" -f $_.Name, $_.Count)
+}
+$report += ""
+
+$win10 = $computers | Where-Object { $_.enabled -and $_.operatingSystem -like "Windows 10*" }
+if ($win10.Count -gt 0) {
+    $report += @"
+DATORER SOM KRÄVER UPPGRADERING (Windows 10)
+--------------------------------------------
+"@
+    $report += ("{0,-18}{1,-22}{2,-16}" -f "Namn", "OS-version", "Site")
+    $report += ("{0,-18}{1,-22}{2,-16}" -f "----", "---------", "----")
+    foreach ($c in ($win10 | Sort-Object site, name)) {
+        $osver = if ($c.operatingSystemVersion) { $c.operatingSystemVersion } else { "-" }
+        $site = if ($c.site) { $c.site } else { "-" }
+        $report += ("{0,-18}{1,-22}{2,-16}" -f $c.name, $osver, $site)
+    }
+    $report += ""
+}
 
 
 

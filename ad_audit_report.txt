@@ -53,6 +53,16 @@ yynva       Ynva Ynvasson         Finance         2025-06-20               116
 mmaria      Maria Mariasson       Finance         2025-07-01               105
 ddavid      David Davidsson       IT              2025-07-20                86
 
+DATORSTATISTIK PER SITE
+-----------------------
+Site                 Tot    Inakt    Win10    Win11   Server
+----                 ---   ------   ------   ------   ------
+Datacenter             4        0        0        1        3
+Huvudkontor            8        2        3        5        0
+Kontor Malmö           3        1        1        2        0
+Lager                  3        1        1        2        0
+Säkerhetskopia         2        0        0        1        1
+
 10 DATORER SOM INTE SETTS PÅ LÄNGST TID
 ---------------------------------------
 Namn            Senast sedd     Dagar Site              
@@ -74,4 +84,22 @@ Konto       Namn                  Avdelning       Löper ut
 -----       ----                  -----------     ---------         
 jjohan      Johan Johansson       Operations      2025-10-30        
 eerik       Erik Eriksson         IT              2025-11-01        
+
+OPERATIVSYSTEM
+---------------------------
+Windows 11 Pro                10 st
+Windows 10 Pro                 4 st
+Windows Server 2022            3 st
+Windows 10 Enterprise          1 st
+Windows 11 Enterprise          1 st
+Windows Server 2019            1 st
+
+DATORER SOM KRÄVER UPPGRADERING (Windows 10)
+--------------------------------------------
+Namn              OS-version            Site            
+----              ---------             ----            
+LAPTOP-HK-002     22H2                  Huvudkontor     
+PC-HK-003         22H2                  Huvudkontor     
+PC-MAL-003        22H2                  Kontor Malmö    
+PC-LAG-002        22H2                  Lager           
 
